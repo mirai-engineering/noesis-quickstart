@@ -1,0 +1,13 @@
+id,input,expected,actual
+1,Ana Ruiz. Staff engineer at Lumio; 9 years of Go and Postgres. Built the payments API.,92,90
+2,Tom Becker. Junior developer; 1 year of React after a bootcamp.,12,20
+3,Priya Nair. Engineering lead; 7 years of Java and Kafka. Ran the platform team.,88,85
+4,Luca Bianchi. Backend developer; 5 years of Python and Django in e-commerce.,74,80
+5,Sara Lind. Data scientist; 12 years of forecasting models. Python only for notebooks.,35,45
+6,Jonas Weber. Systems engineer; 8 years of Rust and distributed systems.,90,88
+7,Mei Chen. Backend developer; 3 years of Node.js at an early-stage startup.,55,60
+8,Diego Alvarez. Site reliability engineer; 10 years of Kubernetes. Writes Go tooling.,70,62
+9,Hannah Cole. QA engineer; 2 years of test automation.,25,30
+10,Omar Haddad. Backend developer; 6 years of Go microservices in fintech.,82,82
+11,Elena Petrova. Engineering manager; 15 years in software; little hands-on code in the last 4.,50,70
+12,Ben Carter. Web developer at an agency; 4 years of PHP and Laravel.,48,55
