@@ -7,8 +7,8 @@ app, and keeps it up to date as new models come out.
 
 Two words we use throughout:
 
-- **Your current model**: the LLM your app calls today, often a frontier model like Gemini or Claude.
-- **Candidate models**: the cheaper open models we test in its place.
+- **Your current model**: the LLM your app calls today, often a frontier model like Gemini or Claude's Sonnet.
+- **Candidate models**: the cheaper open models we test in its place (that still do the job).
 
 Your app makes a few LLM calls, and each one could use any of dozens of models. With 4 calls and 20
 candidate models, that's 20 × 20 × 20 × 20 = 160,000 possible setups. Nobody can try them all by hand.
@@ -53,24 +53,58 @@ A computer can't guess what "good" means for your app; you have to show it. It's
 train chat assistants: people show what a good answer is, and the model learns from it. Here nothing
 gets trained. Your examples become the test every candidate model has to pass.
 
-Send us one CSV file per LLM call. Each row has what your app sends to your current model (`input`)
-and the answer you expect back (`expected`).
+Send us one CSV file (or JSON, see [`examples/`](examples/)) for your app. Each row is one example:
+what goes into your app (`input`), then one column per LLM call, named after its alias, with the
+answer you expect from your current model at that step.
 
 ![What you send us](what-you-send.svg)
 
-- **A category**, like positive or negative: write the one you expect, as in
-  [`data/classify.csv`](data/classify.csv).
-- **A number**, like a star rating: write the one you expect, as in [`data/stars.csv`](data/stars.csv),
-  and tell us how far off is still fine (here: 1 star).
-- **A phrase**, like a reply to a customer: many could be good, so write one you would be happy to
-  send, as in [`data/reply.csv`](data/reply.csv). You can also paste one your current model wrote, if
-  you're happy with it.
+- **A category**, like positive or negative (`classify`): write the one you expect.
+- **A number**, like a star rating (`stars`): write the one you expect, and tell us how far off is
+  still fine (here: 1 star).
+- **A phrase**, like a reply to a customer (`reply`): many could be good, so write one you would be
+  happy to send. You can also paste one your current model wrote, if you're happy with it.
 
-Also send us **your prompts**, and the order your app runs the calls in (here: classify, stars, reply).
-We run your app's steps with each candidate model, so we need them as they are.
+The whole file for the mock app is [`data/demo.csv`](data/demo.csv).
 
 Is your input more than a sentence, like a JSON record or an image? Or is your answer structured,
 like JSON? See [`examples/`](examples/).
+
+### How many examples?
+
+About **20 rows to get started**, and **50 to 100** before you rely on the result. Twenty already
+separates clearly better models from clearly worse ones; more examples separate the close ones. Pick
+them like your real traffic: mostly typical cases, plus a few hard ones.
+
+The temptation to just let your coding agent do this for you is there. But please, review on your own
+at least 5 examples per call. Then let your agent either get the rest from your app's real traffic, 
+or let it generate the rest of the examples. Then check them yourself. The results of Noesis can be
+only as good as the steering users give it.
+
+### Also send us your prompts, and the order of the calls
+
+A model's answer depends on two things: the **instructions** your app gives it (the prompt) and the
+**data** (`input`). Your CSV holds the data; the instructions live in your code. To test a candidate
+model fairly, it has to get exactly the instructions your current model gets. Otherwise we would be
+testing our prompt, not the model.
+
+Your prompts stay yours. We use them only to test candidate models on your real app, never for
+anything else, and we never share them.
+
+The **order** matters because calls often feed each other. In the mock app, the reply step receives the
+label from the classify step, so a candidate that gets the label wrong also spoils the reply. You tell
+us the order and what each step receives; we rebuild your steps to run exactly like your app, and test
+every candidate model that way.
+
+For the mock app, that's:
+
+| order | alias | prompt | gets |
+|---|---|---|---|
+| 1 | `demo/classify` | Is this restaurant review positive or negative? Reply with one word. | the review |
+| 2 | `demo/stars` | How many stars, from 1 to 5, did this reviewer give? Reply with the number only. | the review |
+| 3 | `demo/reply` | Reply to this {label} restaurant review in at most two sentences. | the review, and the label from step 1 |
+
+Send your prompts as they are in your code, with any settings you pass (temperature, maximum length).
 
 ## 3. How we turn your examples into a score
 
@@ -105,3 +139,5 @@ When new models come out, we run the search again.
 ## Your data
 
 Used only to find models for you, kept on our side, never shared with anyone, deleted when you ask.
+The same goes for your prompts: they stay yours, and we use them only to test candidate models on
+your app.

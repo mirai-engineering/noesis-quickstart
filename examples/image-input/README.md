@@ -5,10 +5,10 @@
 **The CSV.** Images don't fit in a CSV cell, so put the images in a folder and write each file name
 in `input`. Send the folder together with the CSV. You could write it like this:
 
-| id | input | expected |
-|---|---|---|
-| 1 | images/receipt-001.jpg | 23.50 |
-| 2 | images/receipt-002.jpg | 8.90 |
+| input | receipt |
+|---|---|
+| images/receipt-001.jpg | 23.50 |
+| images/receipt-002.jpg | 8.90 |
 
     receipt.csv
     images/

@@ -9,4 +9,5 @@ more. These are made-up cases, only to show how to fill in the CSV. Nothing here
 | [`json-output/`](json-output/) | an email | a JSON object (the booking details) |
 | [`image-input/`](image-input/) | a photo (a receipt) | a number |
 
-The rule stays the same: one CSV per LLM call, one row per example, `input` and `expected`.
+The rule stays the same: one CSV for your app, one row per example: `input`, then one column per LLM
+call with the answer you expect. Each case here is an app with a single call, so a single column.

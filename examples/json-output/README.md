@@ -3,14 +3,14 @@
 **The call** (`demo/booking`): your app sends a booking email, and your current model pulls out the
 details as JSON.
 
-**The CSV.** Put the JSON you expect in the `expected` cell. You could write it like this:
+**The CSV.** Put the JSON you expect in the `booking` column. You could write it like this:
 
-| id | input | expected |
-|---|---|---|
-| 1 | Hi, a table for 4 this Friday at 8pm please, name is Ana Ruiz. | `{"name": "Ana Ruiz", "people": 4, "day": "Friday", "time": "20:00"}` |
-| 2 | Can we come Sunday lunch, around 1? Two of us. Tom | `{"name": "Tom", "people": 2, "day": "Sunday", "time": "13:00"}` |
+| input | booking |
+|---|---|
+| Hi, a table for 4 this Friday at 8pm please, name is Ana Ruiz. | `{"name": "Ana Ruiz", "people": 4, "day": "Friday", "time": "20:00"}` |
+| Can we come Sunday lunch, around 1? Two of us. Tom | `{"name": "Tom", "people": 2, "day": "Sunday", "time": "13:00"}` |
 
-Use the same field names your app reads. If a field doesn't matter to you, leave it out of `expected`
+Use the same field names your app reads. If a field doesn't matter to you, leave it out
 and we won't check it.
 
 **How we score it:** field by field. Each field the candidate model gets right counts; 3 out of 4 fields
