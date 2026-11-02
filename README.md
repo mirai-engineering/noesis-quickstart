@@ -3,6 +3,16 @@
 Noesis finds the cheapest model that still gives the answers you expect, for each LLM call in your
 app, and keeps it up to date as new models come out.
 
+**What you do, in short:**
+
+1. Change two things in your app: `base_url` and the model name (step 1).
+2. Send us **two CSV files** (step 2). This repo has the mock app's version of both in [`data/`](data/);
+   yours have the same columns:
+   - [`data/demo.csv`](data/demo.csv): examples of good answers, one row per example.
+   - [`data/steps.csv`](data/steps.csv): your prompts and how your LLM calls chain, one row per call.
+
+Everything else in this repo explains how to fill in those two files.
+
 ## What "optimize" means here
 
 Two words we use throughout:
@@ -31,7 +41,7 @@ Each call gets a short name, an **alias**, written `<app>/<task>`: here `demo/cl
 and `demo/reply`. Your app asks for the alias instead of a model name, and Noesis decides which model
 answers it.
 
-![How it works](how-it-works.svg)
+![How it works](assets/how-it-works.svg)
 
 ## 1. Point your app at Noesis
 
@@ -53,11 +63,19 @@ A computer can't guess what "good" means for your app; you have to show it. It's
 train chat assistants: people show what a good answer is, and the model learns from it. Here nothing
 gets trained. Your examples become the test every candidate model has to pass.
 
-Send us one CSV file (or JSON, see [`examples/`](examples/)) for your app. Each row is one example:
-what goes into your app (`input`), then one column per LLM call, named after its alias, with the
-answer you expect from your current model at that step.
+You send us two CSV files. The mock app's versions are in [`data/`](data/); name yours as you like.
 
-![What you send us](what-you-send.svg)
+| File | What's in it | One row per |
+|---|---|---|
+| [`data/demo.csv`](data/demo.csv) | examples: an input, and the answer you expect from each call | example |
+| [`data/steps.csv`](data/steps.csv) | your prompts, and what each call receives | LLM call |
+
+### File 1 of 2: `data/demo.csv`, examples of good answers
+
+Each row is one example: what goes into your app (`input`), then one column per LLM call, named after
+its alias, with the answer you expect from your current model at that step.
+
+![What you send us](assets/what-you-send.svg)
 
 - **A category**, like positive or negative (`demo/classify`): write the one you expect.
 - **A number**, like a star rating (`demo/stars`): write the one you expect, and tell us how far off is
@@ -68,9 +86,9 @@ answer you expect from your current model at that step.
 The whole file for the mock app is [`data/demo.csv`](data/demo.csv).
 
 Is your input more than a sentence, like a JSON record or an image? Or is your answer structured,
-like JSON? See [`examples/`](examples/).
+like JSON? It still goes in these two CSV files; [`examples/`](examples/) shows how.
 
-### How many examples?
+#### How many examples?
 
 About **20 rows to get started**, and **50 to 100** before you rely on the result. Twenty already
 separates clearly better models from clearly worse ones; more examples separate the close ones. Pick
@@ -81,10 +99,10 @@ at least 5 examples per call. Then let your agent either get the rest from your 
 or let it generate the rest of the examples. Then check them yourself. The results of Noesis can be
 only as good as the steering users give it.
 
-### Also send us your prompts, and the order of the calls
+### File 2 of 2: `data/steps.csv`, your prompts and the order of the calls
 
 A model's answer depends on two things: the **instructions** your app gives it (the prompt) and the
-**data**. Your CSV holds the data; the **prompts** live in your code. To test a candidate
+**data**. File 1 holds the data; the **prompts** live in your code. To test a candidate
 model fairly, it has to get exactly the instructions your current model gets. Otherwise we would be
 testing our prompt, not the model.
 
@@ -96,11 +114,11 @@ label from the classify step, so a candidate that gets the label wrong also spoi
 us the order and what each step receives; we rebuild your steps to run exactly like your app, and test
 every candidate model that way.
 
-![How your steps connect](how-steps-connect.svg)
+![How your steps connect](assets/how-steps-connect.svg)
 
-Write it down in one more small file, one row per LLM call ([`data/steps.csv`](data/steps.csv)). The
-prompts usually show how calls chain, but it's often hidden in code; a table where you say it is
-clearer for both of us. For the mock app, you could write it like this:
+You write all of this in `data/steps.csv`, one row per LLM call. The prompts usually show how calls
+chain, but it's often hidden in code; a table where you say it is clearer for both of us. For the mock
+app, you could write it like this ([`data/steps.csv`](data/steps.csv)):
 
 | step | alias | prompt | receives | settings |
 |---|---|---|---|---|
@@ -115,8 +133,8 @@ clearer for both of us. For the mock app, you could write it like this:
 
 ## 3. How we turn your examples into a score
 
-For each candidate model, we run your inputs through your app's steps and compare its answer with the
-one you expected. Each answer gets a score from 0 (bad) to 1 (good). Engineers call the rule that gives
+For each candidate model, we run the inputs from `data/demo.csv` through your steps from
+`data/steps.csv`, and compare its answer with the one you expected. Each answer gets a score from 0 (bad) to 1 (good). Engineers call the rule that gives
 this score an `eval_fn`. You don't write it; we build it from your examples.
 
 - **A category** (`demo/classify`): is the candidate's answer the same as yours?
