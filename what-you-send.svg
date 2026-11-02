@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" font-family="Helvetica, Arial, sans-serif" font-size="14">
+  <rect width="900" height="450" fill="#ffffff"/>
+  <g transform="translate(0,-400)">
+  <!-- What you send -->
+  <rect x="30" y="430" width="840" height="410" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="2"/>
+  <text x="50" y="458" font-size="18" font-weight="bold" fill="#e8590c">What you send us: examples of good answers, one CSV per call</text>
+
+  <text x="50" y="490" font-weight="bold">classify.csv</text>
+  <text x="150" y="490" font-size="13" fill="#495057">A category (positive or negative). You could write it like this:</text>
+  <g font-size="12">
+    <rect x="50" y="500" width="800" height="26" fill="#ffe8cc" stroke="#f08c00"/>
+    <rect x="50" y="526" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <rect x="50" y="552" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <line x1="330" y1="500" x2="330" y2="578" stroke="#f08c00"/>
+    <text x="60" y="518" font-weight="bold">input</text>
+    <text x="340" y="518" font-weight="bold">expected</text>
+    <text x="60" y="544">The pasta was cold and the waiter ignored us.</text>
+    <text x="340" y="544">negative</text>
+    <text x="60" y="570">Food was fine, but we waited 40 minutes.</text>
+    <text x="340" y="570">negative</text>
+  </g>
+
+  <text x="50" y="610" font-weight="bold">stars.csv</text>
+  <text x="130" y="610" font-size="13" fill="#495057">A number (1 to 5). You could write it like this, and tell us how far off is still fine:</text>
+  <g font-size="12">
+    <rect x="50" y="620" width="800" height="26" fill="#ffe8cc" stroke="#f08c00"/>
+    <rect x="50" y="646" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <rect x="50" y="672" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <line x1="330" y1="620" x2="330" y2="698" stroke="#f08c00"/>
+    <text x="60" y="638" font-weight="bold">input</text>
+    <text x="340" y="638" font-weight="bold">expected</text>
+    <text x="60" y="664">The pasta was cold and the waiter ignored us.</text>
+    <text x="340" y="664">1</text>
+    <text x="60" y="690">Food was fine, but we waited 40 minutes.</text>
+    <text x="340" y="690">2</text>
+  </g>
+
+  <text x="50" y="730" font-weight="bold">reply.csv</text>
+  <text x="130" y="730" font-size="13" fill="#495057">A phrase. Many could be good; you could write one like this:</text>
+  <g font-size="12">
+    <rect x="50" y="740" width="800" height="26" fill="#ffe8cc" stroke="#f08c00"/>
+    <rect x="50" y="766" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <rect x="50" y="792" width="800" height="26" fill="#ffffff" stroke="#f08c00"/>
+    <line x1="330" y1="740" x2="330" y2="818" stroke="#f08c00"/>
+    <text x="60" y="758" font-weight="bold">input</text>
+    <text x="340" y="758" font-weight="bold">expected</text>
+    <text x="60" y="784">The pasta was cold and the waiter ignored us.</text>
+    <text x="340" y="784">Sorry about the cold pasta and the wait. Your next dessert is on us.</text>
+    <text x="60" y="810">Food was fine, but we waited 40 minutes.</text>
+    <text x="340" y="810">Glad you liked the food, and sorry for the 40-minute wait.</text>
+  </g>
+  </g>
+</svg>

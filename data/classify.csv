@@ -1,0 +1,4 @@
+id,input,expected
+1,The pasta was cold and the waiter ignored us.,negative
+2,"Lovely terrace, we'll be back!",positive
+3,"Food was fine, but we waited 40 minutes.",negative

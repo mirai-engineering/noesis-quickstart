@@ -1,70 +1,107 @@
 # noesis-quickstart
 
-The smallest example of using a Noesis endpoint: change two things in your app, hand over a CSV,
-and get a scored comparison of models. The demo app has two LLM calls and runs with no GPU and no keys.
+Noesis finds the cheapest model that still gives the answers you expect, for each LLM call in your
+app, and keeps it up to date as new models come out.
 
-## Try it (2 minutes)
+## What "optimize" means here
 
-    uv sync
-    export NOESIS_API_KEY=demo-key
-    uv run uvicorn tools.fake_backend:app --port 9000 &     # stand-in model server
-    uv run uvicorn router.main:app --port 8000 &            # the router: aliases -> backends
-    uv run python -m app.main "Ana Ruiz. Staff engineer at Lumio; 9 years of Go and Postgres."
-    uv run python -m tools.replay demo/score data/score.csv
+Two words we use throughout:
 
-## What you do, in three steps
+- **Your current model**: the LLM your app calls today, often a frontier model like Gemini or Claude.
+- **Candidate models**: the cheaper open models we test in its place.
 
-**1. Point your app at Noesis.** Find where you build your LLM client and change two things:
-`base_url` and the `model`. Each place in your app that calls an LLM gets its own alias.
+Your app makes a few LLM calls, and each one could use any of dozens of models. With 4 calls and 20
+candidate models, that's 20 × 20 × 20 × 20 = 160,000 possible setups. Nobody can try them all by hand.
+
+To **optimize** is to search those setups for the best one that reaches a goal without breaking a rule:
+
+- **Goal:** pay as little as possible.
+- **Rule:** the answers stay as good as you expect.
+
+Cost is easy to measure. "As good as you expect" isn't: only you know what a good answer looks like in
+your app. So before we can search, you show us, with examples. That's step 2.
+
+## The mock app
+
+This repo uses a made-up app to show what that takes. It reads a restaurant review, **classifies** it
+as positive or negative, guesses its **stars** from 1 to 5, then **writes a reply** to the customer:
+three LLM calls, one for each kind of answer (a category, a number, a phrase).
+
+Each call gets a short name, an **alias**, written `<app>/<task>`: here `demo/classify`, `demo/stars`
+and `demo/reply`. Your app asks for the alias instead of a model name, and Noesis decides which model
+answers it.
+
+![How it works](how-it-works.svg)
+
+## 1. Point your app at Noesis
+
+Where your app calls an LLM, change two things: `base_url` and `model`.
 
 ```python
-client = OpenAI(base_url="https://<noesis-endpoint>/v1", api_key=NOESIS_API_KEY)
-client.chat.completions.create(model="demo/score", messages=[...])   # was: model="gemini-2.5-flash"
+client = OpenAI(base_url="https://noesis.mirai-engineering.com/v1", api_key=NOESIS_API_KEY)
+
+client.chat.completions.create(model="demo/classify", messages=[...])   # frontier model was: model="gemini-2.5-flash"
+client.chat.completions.create(model="demo/stars", messages=[...])      # frontier model was: model="gemini-2.5-flash"
+client.chat.completions.create(model="demo/reply", messages=[...])      # frontier model was: model="claude-opus-5-5"
 ```
 
-This is the whole integration (`app/client.py`). It works the same with LangChain, LangGraph or any
-framework that lets you set an OpenAI base URL. Set `CAPTURE=1` and your app writes the CSV below for you.
+That's it. The alias never changes; the model behind it does, when we find a better one.
 
-**2. Give us your data, one CSV per alias** (`data/score.csv`, `data/write.csv`):
+## 2. Show us what a good answer looks like
 
-| column | meaning |
-|---|---|
-| `id` | any unique value |
-| `input` | what your app sent to the model |
-| `expected` | what a good answer looks like (an answer, or the facts it must contain) |
-| `actual` | what your current model answered |
+A computer can't guess what "good" means for your app; you have to show it. It's the same idea used to
+train chat assistants: people show what a good answer is, and the model learns from it. Here nothing
+gets trained. Your examples become the test every candidate model has to pass.
 
-UTF-8, one header row, no empty cells. Check yours with `uv run python -m tools.validate file.csv`.
+Send us one CSV file per LLM call. Each row has what your app sends to your current model (`input`)
+and the answer you expect back (`expected`).
 
-**3. Say what good means: one function** `eval_fn(expected, actual) -> 0..1` per alias (`evals/`).
-- Numeric answers need no judge (`evals/score.py`).
-- Free text is up to you (`evals/write.py`): a few checks, an LLM judge, or scores a person gave.
-  The better this is, the better the result.
+![What you send us](what-you-send.svg)
 
-`tools/replay.py` then scores your `actual` column and every candidate model on your data. Noesis
-optimizes against the score you give it; it does not decide what good is.
+- **A category**, like positive or negative: write the one you expect, as in
+  [`data/classify.csv`](data/classify.csv).
+- **A number**, like a star rating: write the one you expect, as in [`data/stars.csv`](data/stars.csv),
+  and tell us how far off is still fine (here: 1 star).
+- **A phrase**, like a reply to a customer: many could be good, so write one you would be happy to
+  send, as in [`data/reply.csv`](data/reply.csv). You can also paste one your current model wrote, if
+  you're happy with it.
 
-## Layout
+Also send us **your prompts**, and the order your app runs the calls in (here: classify, stars, reply).
+We run your app's steps with each candidate model, so we need them as they are.
 
-    app/      the demo app: two call sites (steps.py), the integration (client.py)
-    data/     example CSVs (made up)
-    evals/    one scoring function per alias
-    router/   FastAPI router: alias -> {base_url, model}; config.toml is the only thing to edit
-    tools/    validate.py, replay.py, fake_backend.py
+Is your input more than a sentence, like a JSON record or an image? Or is your answer structured,
+like JSON? See [`examples/`](examples/).
 
-## Moving servers
+## 3. How we turn your examples into a score
 
-All backends are in `router/config.toml`. Moving from one GPU provider to another, or adding one,
-means editing a `base_url`. Your app keeps using the same aliases.
+For each candidate model, we run your inputs through your app's steps and compare its answer with the
+one you expected. Each answer gets a score from 0 (bad) to 1 (good). Engineers call the rule that gives
+this score an `eval_fn`. You don't write it; we build it from your examples.
 
-## Not done yet
+- **A category** (`classify`): is the candidate's answer the same as yours?
 
-- **Real backends:** `router/config.toml` points at the fake server. The GCP vLLM servers need a public path
-  from wherever the router runs, then a `[models.*]` entry each (Modal later is the same).
-- **Optimizer:** `tools/replay.py` is a plain loop over candidate models. Wiring in `agentopt` is next; it takes
-  the same `eval_fn(expected, actual)`.
-- **Per-client keys:** the router has one `NOESIS_API_KEY`.
+  ```python
+  def eval_fn(expected, answer):
+      return 1.0 if answer.strip().lower() == expected else 0.0
+  ```
 
-## Tests
+- **A number** (`stars`): how far off is it? Exact scores 1, one star off scores 0.5, further scores 0.
 
-    uv run pytest
+  ```python
+  def eval_fn(expected, answer):
+      return max(0.0, 1 - abs(int(answer) - int(expected)) / 2)
+  ```
+
+- **A phrase** (`reply`): the words will differ, so we check what matters instead. Does the
+  candidate's reply apologise for the same problem yours does? Another LLM reads both replies and
+  judges that.
+
+Each review then gets one score: by default the average of the three. If one call matters more to
+you, say so and it counts more.
+
+Then we keep the cheapest models whose answers score as well as yours, and point your aliases at them.
+When new models come out, we run the search again.
+
+## Your data
+
+Used only to find models for you, kept on our side, never shared with anyone, deleted when you ask.

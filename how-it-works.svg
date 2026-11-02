@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="Helvetica, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#495057"/>
+    </marker>
+  </defs>
+  <rect width="900" height="430" fill="#ffffff"/>
+
+  <!-- Your app -->
+  <rect x="30" y="30" width="330" height="370" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2"/>
+  <text x="50" y="58" font-size="18" font-weight="bold" fill="#1971c2">Mock app: restaurant reviews</text>
+  <text x="50" y="90" fill="#495057">Review: "The pasta was cold..."</text>
+  <line x1="195" y1="100" x2="195" y2="122" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="50" y="125" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="65" y="148" font-weight="bold">1 · classify: positive or negative?</text>
+  <text x="65" y="168" font-family="Menlo, monospace" font-size="12">model="demo/classify"</text>
+  <line x1="195" y1="181" x2="195" y2="203" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="50" y="206" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="65" y="229" font-weight="bold">2 · stars: how many, 1 to 5?</text>
+  <text x="65" y="249" font-family="Menlo, monospace" font-size="12">model="demo/stars"</text>
+  <line x1="195" y1="262" x2="195" y2="284" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="50" y="287" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="65" y="310" font-weight="bold">3 · reply: answer the customer</text>
+  <text x="65" y="330" font-family="Menlo, monospace" font-size="12">model="demo/reply"</text>
+  <text x="50" y="380" fill="#495057">negative · 1 star · "Sorry about the cold pasta..."</text>
+
+  <!-- Arrows to endpoint -->
+  <line x1="340" y1="153" x2="485" y2="153" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="340" y1="234" x2="485" y2="234" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="340" y1="315" x2="485" y2="315" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="366" y="190" font-size="12" fill="#495057">base_url =</text>
+  <text x="366" y="205" font-size="12" fill="#495057">noesis</text>
+
+  <!-- Noesis -->
+  <rect x="490" y="30" width="380" height="370" rx="10" fill="#f3f0ff" stroke="#7048e8" stroke-width="2"/>
+  <text x="510" y="58" font-size="18" font-weight="bold" fill="#7048e8">Noesis endpoint</text>
+  <text x="510" y="90" fill="#495057">Each alias points to the cheapest model</text>
+  <text x="510" y="108" fill="#495057">that still gives the answers you expect.</text>
+  <rect x="510" y="125" width="340" height="56" rx="6" fill="#ffffff" stroke="#7048e8"/>
+  <text x="525" y="148" font-family="Menlo, monospace" font-size="13">demo/classify → gemma-4-12b</text>
+  <text x="525" y="168" font-size="12" fill="#868e96">next month: maybe a newer, cheaper model</text>
+  <rect x="510" y="206" width="340" height="56" rx="6" fill="#ffffff" stroke="#7048e8"/>
+  <text x="525" y="229" font-family="Menlo, monospace" font-size="13">demo/stars    → ministral-3-8b</text>
+  <text x="525" y="249" font-size="12" fill="#868e96">next month: maybe a newer, cheaper model</text>
+  <rect x="510" y="287" width="340" height="56" rx="6" fill="#ffffff" stroke="#7048e8"/>
+  <text x="525" y="310" font-family="Menlo, monospace" font-size="13">demo/reply    → qwen3.6-35b-a3b</text>
+  <text x="525" y="330" font-size="12" fill="#868e96">next month: maybe a newer, cheaper model</text>
+  <text x="510" y="370" fill="#495057">The alias stays. The model behind it changes</text>
+  <text x="510" y="388" fill="#495057">when we find a better one. Your code doesn't.</text>
+</svg>
