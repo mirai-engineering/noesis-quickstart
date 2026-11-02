@@ -10,18 +10,20 @@
   <rect x="30" y="30" width="330" height="370" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="2"/>
   <text x="50" y="58" font-size="18" font-weight="bold" fill="#1971c2">Mock app: restaurant reviews</text>
   <text x="50" y="90" fill="#495057">Review: "The pasta was cold..."</text>
-  <line x1="195" y1="100" x2="195" y2="122" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
-  <rect x="50" y="125" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
-  <text x="65" y="148" font-weight="bold">1 · classify: positive or negative?</text>
-  <text x="65" y="168" font-family="Menlo, monospace" font-size="12">model="demo/classify"</text>
-  <line x1="195" y1="181" x2="195" y2="203" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
-  <rect x="50" y="206" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
-  <text x="65" y="229" font-weight="bold">2 · stars: how many, 1 to 5?</text>
-  <text x="65" y="249" font-family="Menlo, monospace" font-size="12">model="demo/stars"</text>
-  <line x1="195" y1="262" x2="195" y2="284" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
-  <rect x="50" y="287" width="290" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
-  <text x="65" y="310" font-weight="bold">3 · reply: answer the customer</text>
-  <text x="65" y="330" font-family="Menlo, monospace" font-size="12">model="demo/reply"</text>
+  <!-- the review goes to every call -->
+  <polyline points="56,100 56,315" fill="none" stroke="#495057" stroke-width="1.5"/>
+  <line x1="56" y1="153" x2="73" y2="153" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="56" y1="234" x2="73" y2="234" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="56" y1="315" x2="73" y2="315" stroke="#495057" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="75" y="125" width="265" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="88" y="148" font-weight="bold">1 · classify: positive or negative?</text>
+  <text x="88" y="168" font-family="Menlo, monospace" font-size="12">model="demo/classify"</text>
+  <rect x="75" y="206" width="265" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="88" y="229" font-weight="bold">2 · stars: how many, 1 to 5?</text>
+  <text x="88" y="249" font-family="Menlo, monospace" font-size="12">model="demo/stars"</text>
+  <rect x="75" y="287" width="265" height="56" rx="6" fill="#ffffff" stroke="#1971c2"/>
+  <text x="88" y="310" font-weight="bold">3 · reply: answer the customer</text>
+  <text x="88" y="330" font-family="Menlo, monospace" font-size="12">model="demo/reply"</text>
   <text x="50" y="380" fill="#495057">negative · 1 star · "Sorry about the cold pasta..."</text>
 
   <!-- Arrows to endpoint -->

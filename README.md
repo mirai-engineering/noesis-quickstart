@@ -59,10 +59,10 @@ answer you expect from your current model at that step.
 
 ![What you send us](what-you-send.svg)
 
-- **A category**, like positive or negative (`classify`): write the one you expect.
-- **A number**, like a star rating (`stars`): write the one you expect, and tell us how far off is
+- **A category**, like positive or negative (`demo/classify`): write the one you expect.
+- **A number**, like a star rating (`demo/stars`): write the one you expect, and tell us how far off is
   still fine (here: 1 star).
-- **A phrase**, like a reply to a customer (`reply`): many could be good, so write one you would be
+- **A phrase**, like a reply to a customer (`demo/reply`): many could be good, so write one you would be
   happy to send. You can also paste one your current model wrote, if you're happy with it.
 
 The whole file for the mock app is [`data/demo.csv`](data/demo.csv).
@@ -84,7 +84,7 @@ only as good as the steering users give it.
 ### Also send us your prompts, and the order of the calls
 
 A model's answer depends on two things: the **instructions** your app gives it (the prompt) and the
-**data** (`input`). Your CSV holds the data; the instructions live in your code. To test a candidate
+**data**. Your CSV holds the data; the **prompts** live in your code. To test a candidate
 model fairly, it has to get exactly the instructions your current model gets. Otherwise we would be
 testing our prompt, not the model.
 
@@ -96,15 +96,22 @@ label from the classify step, so a candidate that gets the label wrong also spoi
 us the order and what each step receives; we rebuild your steps to run exactly like your app, and test
 every candidate model that way.
 
-For the mock app, that's:
+![How your steps connect](how-steps-connect.svg)
 
-| order | alias | prompt | gets |
-|---|---|---|---|
-| 1 | `demo/classify` | Is this restaurant review positive or negative? Reply with one word. | the review |
-| 2 | `demo/stars` | How many stars, from 1 to 5, did this reviewer give? Reply with the number only. | the review |
-| 3 | `demo/reply` | Reply to this {label} restaurant review in at most two sentences. | the review, and the label from step 1 |
+Write it down in one more small file, one row per LLM call ([`data/steps.csv`](data/steps.csv)). The
+prompts usually show how calls chain, but it's often hidden in code; a table where you say it is
+clearer for both of us. For the mock app, you could write it like this:
 
-Send your prompts as they are in your code, with any settings you pass (temperature, maximum length).
+| step | alias | prompt | receives | settings |
+|---|---|---|---|---|
+| 1 | `demo/classify` | Is this restaurant review positive or negative? Reply with one word. | input | temperature=0 |
+| 2 | `demo/stars` | How many stars, from 1 to 5, did this reviewer give? Reply with the number only. | input | temperature=0 |
+| 3 | `demo/reply` | Reply to this {demo/classify} restaurant review in at most two sentences. | input, demo/classify | temperature=0 |
+
+- **prompt**: as it is in your code. Where it uses an earlier step's answer, write that step's alias
+  in braces, like `{demo/classify}`.
+- **receives**: `input`, and the alias of every earlier step whose answer this one uses.
+- **settings**: anything you pass with the call (temperature, maximum length), or leave it empty.
 
 ## 3. How we turn your examples into a score
 
@@ -112,21 +119,21 @@ For each candidate model, we run your inputs through your app's steps and compar
 one you expected. Each answer gets a score from 0 (bad) to 1 (good). Engineers call the rule that gives
 this score an `eval_fn`. You don't write it; we build it from your examples.
 
-- **A category** (`classify`): is the candidate's answer the same as yours?
+- **A category** (`demo/classify`): is the candidate's answer the same as yours?
 
   ```python
   def eval_fn(expected, answer):
       return 1.0 if answer.strip().lower() == expected else 0.0
   ```
 
-- **A number** (`stars`): how far off is it? Exact scores 1, one star off scores 0.5, further scores 0.
+- **A number** (`demo/stars`): how far off is it? Exact scores 1, one star off scores 0.5, further scores 0.
 
   ```python
   def eval_fn(expected, answer):
       return max(0.0, 1 - abs(int(answer) - int(expected)) / 2)
   ```
 
-- **A phrase** (`reply`): the words will differ, so we check what matters instead. Does the
+- **A phrase** (`demo/reply`): the words will differ, so we check what matters instead. Does the
   candidate's reply apologise for the same problem yours does? Another LLM reads both replies and
   judges that.
 

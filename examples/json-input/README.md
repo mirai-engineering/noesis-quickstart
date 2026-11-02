@@ -6,7 +6,7 @@ how likely they are to come back, from 0 to 100.
 **The CSV.** Paste the JSON into the `input` cell as it is; your spreadsheet tool adds the quoting.
 You could write it like this:
 
-| input | loyalty |
+| input | demo/loyalty |
 |---|---|
 | `{"visits": 12, "last_visit": "2026-10-20", "avg_spend": 45, "last_review": "Great as always"}` | 90 |
 | `{"visits": 1, "last_visit": "2025-03-02", "avg_spend": 18, "last_review": "Too slow"}` | 10 |

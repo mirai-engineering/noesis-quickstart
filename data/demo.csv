@@ -1,4 +1,4 @@
-input,classify,stars,reply
+input,demo/classify,demo/stars,demo/reply
 The pasta was cold and the waiter ignored us.,negative,1,Sorry about the cold pasta and the wait. Your next dessert is on us.
 "Lovely terrace, we'll be back!",positive,5,Thank you! The terrace will be waiting for you.
 "Food was fine, but we waited 40 minutes.",negative,2,"Glad you liked the food, and sorry for the 40-minute wait."

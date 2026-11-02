@@ -1,0 +1,4 @@
+step,alias,prompt,receives,settings
+1,demo/classify,Is this restaurant review positive or negative? Reply with one word.,input,temperature=0
+2,demo/stars,"How many stars, from 1 to 5, did this reviewer give? Reply with the number only.",input,temperature=0
+3,demo/reply,Reply to this {demo/classify} restaurant review in at most two sentences.,"input, demo/classify",temperature=0
